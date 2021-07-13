@@ -1,0 +1,24 @@
+sudo: required
+language: generic
+
+services:
+  - docker
+
+before_install:
+  - docker build -t pozzallo/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true pozzallo/react-test npm test
+
+after_success:
+  - docker build -t pozzallo/multi-client ./client
+  - docker build -t pozzallo/multi-nginx ./nginx
+  - docker build -t pozzallo/multi-server ./server
+  - docker build -t pozzallo/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push pozzallo/multi-client
+  - docker push pozzallo/multi-nginx
+  - docker push pozzallo/multi-server
+  - docker push pozzallo/multi-worker
