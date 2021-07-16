@@ -23,7 +23,7 @@ after_success:
   - docker push pozzallo/multi-server
   - docker push pozzallo/multi-worker
 
-  deploy:
+deploy:
    provider: elasticbeanstalk
    region: 'us-east-2'
    app: 'multi-docker'
